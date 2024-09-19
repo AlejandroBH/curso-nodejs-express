@@ -9,7 +9,10 @@ mongoose.Promise = global.Promise;
 mongoose.set("strictQuery", false);
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/portafolio")
+  .connect("mongodb://127.0.0.1:27017/portafolio", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
     console.log("Conexion a la base de datos establecida satifastoriamente...");
 
