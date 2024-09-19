@@ -25,12 +25,7 @@ var controller = {
     project.year = params.year;
     project.langs = params.langs;
     project.image = null;
-
-    res.status(200).send({});
-
     project.save((err, projectStored) => {
-      console.log(err);
-
       if (err)
         return res
           .status(500)
