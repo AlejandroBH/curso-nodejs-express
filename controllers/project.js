@@ -1,6 +1,7 @@
 "use strict";
 
 var Project = require("../models/project");
+var fs = require("fs");
 
 var controller = {
   home: function (req, res) {
@@ -114,6 +115,50 @@ var controller = {
 
       return res.status(200).send({ project: projectRemoved });
     });
+  },
+
+  uploadImage: function (req, res) {
+    var projectId = req.params.id;
+    var fileName = "Imagen no subida...";
+
+    if (req.files) {
+      var filePath = req.files.image.path;
+      var fileSplit = filePath.split("\\");
+      var fileName = fileSplit[1];
+      var exSplit = fileName.split(".");
+      var fileExt = exSplit[1];
+
+      if (
+        fileExt == "png" ||
+        fileExt == "jpg" ||
+        fileExt == "jpeg" ||
+        fileExt == "gif"
+      ) {
+        Project.findByIdAndUpdate(
+          projectId,
+          { image: fileName },
+          { new: true },
+          (err, projectUpdated) => {
+            if (err)
+              return res
+                .status(500)
+                .send({ message: "La imagen no se ha subido" });
+            if (!projectUpdated)
+              return res.status(404).send({
+                message: "El proyecto no existe y no se ha asignado la imagen",
+              });
+
+            return res.status(200).send({ project: projectUpdated });
+          }
+        );
+      } else {
+        fs.unlink(filePath, (err) => {
+          return res.status(200).send({ message: "La extension no es valida" });
+        });
+      }
+    } else {
+      return res.status(200).send({ message: fileName });
+    }
   },
 };
 
